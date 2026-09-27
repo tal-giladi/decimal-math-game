@@ -13,6 +13,10 @@ A fun Hebrew practice game for kids (around age 8) learning to multiply decimal 
 
 ## Play
 
+Online: https://tal-giladi.github.io/decimal-math-game/
+
+Or offline:
+
 Download or clone the repo and double-click `index.html`. No install needed.
 
 (Optional: `node serve.js`, then open http://localhost:5173)
