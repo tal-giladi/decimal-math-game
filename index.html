@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>מסע הנקודה העשרונית</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="app">
+    <section id="menu" class="screen"></section>
+
+    <section id="play" class="screen hidden">
+      <header class="topbar">
+        <button id="homeBtn" class="icon-btn" title="לתפריט">🏠</button>
+        <div class="qtitle"><span id="qLabel"></span><span id="qProgress" class="muted"></span></div>
+        <div id="streak" class="streak"></div>
+        <button id="padBtn" class="icon-btn" title="מקלדת מספרים">🔢</button>
+        <button id="soundBtn" class="icon-btn" title="צלילים">🔊</button>
+      </header>
+      <div class="coach">
+        <div id="mascot" class="mascot">🦊</div>
+        <div id="bubble" class="bubble"></div>
+      </div>
+      <div id="boardWrap" class="board-wrap"></div>
+      <div id="numpad" class="numpad hidden"></div>
+    </section>
+  </main>
+
+  <div id="doneOverlay" class="overlay hidden">
+    <div class="done-card">
+      <div class="done-emoji">🎉</div>
+      <h2 id="doneTitle"></h2>
+      <div id="doneAnswer" class="done-answer" dir="ltr"></div>
+      <div id="doneNote" class="muted"></div>
+      <div id="doneStars" class="done-stars"></div>
+      <div class="done-buttons">
+        <button id="nextBtn" class="big-btn">לשאלה הבאה ◀</button>
+        <button id="menuBtn" class="big-btn secondary">🏠 לתפריט</button>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="confetti"></canvas>
+
+  <script src="js/questions.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/mul.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
