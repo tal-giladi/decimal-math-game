@@ -2,15 +2,16 @@
   const $ = s => document.querySelector(s);
   const pick = a => a[Math.floor(Math.random() * a.length)];
 
-  const PRAISE = ['יופי! 👏', 'אלופה! 🏆', 'וואו! 🤩', 'בול! 🎯', 'כל הכבוד! 🌟', 'מושלם! ✨', 'איזה מוח! 🧠',
-    'טיל! 🚀', 'גאונה! 🤓', 'כל הכבוד תהילה! 🌟', 'תהילה, את תותחית! 💥', 'נכון מאוד! ✅', 'אש! 🔥', 'מדהים! 🦄', 'יש! 💪', 'סחתיין! 😎'];
-  const OOPS = ['אופס! 🙈', 'כמעט! 🤏', 'הממ... לא בדיוק 🤔', 'הספרה הזאת התחפשה 🥸', 'אוי, החלקתי על בננה 🍌', 'נסי שוב, את יכולה! 💪'];
-  const WIN = ['פתרת! 🥳', 'אלופת העולם! 🌍', 'מלכת הנקודה! 👑', 'איזו תותחית! 💥', 'תהילה, את גאונה! 🤓', 'סיימת בענק! 🐘'];
+  const KID = CONFIG.name;
+  document.title = `מסע הנקודה של ${KID}`;
+  const PRAISE = ['יופי! 👏', G('אלופה! 🏆', 'אלוף! 🏆'), 'וואו! 🤩', 'בול! 🎯', 'כל הכבוד! 🌟', 'מושלם! ✨', 'איזה מוח! 🧠',
+    'טיל! 🚀', G('גאונה! 🤓', 'גאון! 🤓'), `כל הכבוד ${KID}! 🌟`, `${KID}, ${G('את תותחית', 'אתה תותח')}! 💥`, 'נכון מאוד! ✅', 'אש! 🔥', 'מדהים! 🦄', 'יש! 💪', 'סחתיין! 😎'];
+  const OOPS = ['אופס! 🙈', 'כמעט! 🤏', 'הממ... לא בדיוק 🤔', 'הספרה הזאת התחפשה 🥸', 'אוי, החלקתי על בננה 🍌', G('נסי שוב, את יכולה! 💪', 'נסה שוב, אתה יכול! 💪')];
+  const WIN = ['פתרת! 🥳', G('אלופת העולם! 🌍', 'אלוף העולם! 🌍'), G('מלכת הנקודה! 👑', 'מלך הנקודה! 👑'), G('איזו תותחית! 💥', 'איזה תותח! 💥'), `${KID}, ${G('את גאונה', 'אתה גאון')}! 🤓`, 'סיימת בענק! 🐘'];
 
   const all = [];
   PAGES.forEach(page => page.questions.forEach(q => all.push({ page, q })));
 
-  const KID = 'תהילה';
   let currentIdx = -1, custom = null, game = null, streak = 0;
 
   // ---------- sound ----------
@@ -49,7 +50,7 @@
         <h1>היי ${KID}! 👋<small>מסע הנקודה העשרונית</small></h1>
         <div class="stars-total">⭐ ${Store.totalStars()}</div>
       </div>
-      <button class="big-btn" id="continueBtn">${left ? '▶ יאללה, לשאלה הבאה!' : '🏆 פתרת הכל! אלופה!'}</button>
+      <button class="big-btn" id="continueBtn">${left ? '▶ יאללה, לשאלה הבאה!' : `🏆 פתרת הכל! ${G('אלופה', 'אלוף')}!`}</button>
       <div class="page custom">
         <h2>✏️ תרגיל מהחוברת</h2>
         <div class="custom-row">
@@ -58,7 +59,7 @@
             <span>×</span>
             <input id="cB" inputmode="decimal" autocomplete="off" placeholder="2.5">
           </div>
-          <button id="cGo" class="go-btn">פתרי! 🚀</button>
+          <button id="cGo" class="go-btn">${G('פתרי', 'פתור')}! 🚀</button>
         </div>
         <div id="cErr" class="err"></div>
       </div>`;
@@ -110,7 +111,7 @@
     const a = normalize($('#cA').value), b = normalize($('#cB').value);
     const err = t => { $('#cErr').textContent = t; };
     if (!a || !b) return err('צריך לכתוב מספר בכל ריבוע 🙂');
-    if (+a === 0 || +b === 0) return err('כפל ב-0 זה תמיד 0 😉 בחרי מספר אחר');
+    if (+a === 0 || +b === 0) return err(`כפל ב-0 זה תמיד 0 😉 ${G('בחרי', 'בחר')} מספר אחר`);
     if (a.replace('.', '').length > 7 || b.replace('.', '').length > 5) return err('המספר ארוך מדי 😅');
     play({ type: 'mul', questions: [] }, { id: 'custom', label: 'משלי', a, b }, true);
   }
@@ -158,7 +159,7 @@
       Sound.good(streak);
       renderStreak(true);
       let text = pick(PRAISE);
-      if (streak > 0 && streak % 5 === 0) text = `${streak} ברצף! 🔥🔥 את בוערת, תהילה!`;
+      if (streak > 0 && streak % 5 === 0) text = `${streak} ברצף! 🔥🔥 ${G('את בוערת', 'אתה בוער')}, ${KID}!`;
       say(text + (intro ? '<br>' + intro : ''), 'good');
     },
     wrong(hint) {
