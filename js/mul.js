@@ -117,7 +117,7 @@
           const a = aRev[k], m = a * p.d, v = m + carry;
           s.hl = [A.cells[k], B.cells[p.shift]];
           s.hints = [
-            `כמה זה ${a} × ${p.d}?` + (carry ? ` ואל תשכח להוסיף את ה-${carry} שזכרנו!` : ''),
+            `כמה זה ${a} × ${p.d}?` + (carry ? ` ואל תשכחי להוסיף את ה-${carry} שזכרנו!` : ''),
             `${a} × ${p.d} = ${m}` + (carry ? `, ועוד ${carry} שזכרנו = ${v}` : ''),
             v >= 10 ? `כותבים ${v % 10} וזוכרים ${Math.floor(v / 10)}` : `כותבים ${v % 10}`
           ];
@@ -151,7 +151,7 @@
           clearCarry: c === 0,
           intro: c === 0 ? 'כל השורות מוכנות! 💪<br>עכשיו מחברים אותן ➕ מתחילים מימין' : null,
           hints: [
-            parts.length ? `חבר את הספרות בעמודה הצהובה` + (carry ? ` ועוד ${carry} שזכרנו` : '') : `נשאר לנו ${carry} שזכרנו`,
+            parts.length ? `חברי את הספרות בעמודה הצהובה` + (carry ? ` ועוד ${carry} שזכרנו` : '') : `נשאר לנו ${carry} שזכרנו`,
             `${expr} = ${v}`,
             v >= 10 ? `כותבים ${v % 10} וזוכרים ${Math.floor(v / 10)}` : `כותבים ${v % 10}`
           ]
@@ -171,7 +171,11 @@
     function startStep(i, praised) {
       clearHl();
       idx = i;
-      if (i >= steps.length) return startPoint(praised);
+      if (i >= steps.length) {
+        if (decimals > 0) return startPoint(praised);
+        finished = true;
+        return ui.complete({ answer: formatAnswer(), trimmed: false, mistakes });
+      }
       const s = steps[i];
       s.fails = 0;
       if (s.clearCarry) carryCells.forEach(c => { c.textContent = ''; });
@@ -225,7 +229,7 @@
     const gaps = [];
     function startPoint(praised) {
       phase = 'point';
-      const text = 'כל הספרות נכונות! 🎯<br>עכשיו הכי חשוב: איפה שמים את הנקודה?<br>לחץ על העיגול הנכון 👇';
+      const text = 'כל הספרות נכונות! 🎯<br>עכשיו הכי חשוב: איפה שמים את הנקודה?<br>לחצי על העיגול הנכון 👇';
       if (praised) ui.correct(text); else ui.say(text, 'info');
       for (let p = 1; p <= prodRev.length; p++) {
         const g = document.createElement('button');

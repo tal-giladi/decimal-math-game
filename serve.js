@@ -7,7 +7,7 @@ http.createServer((req, res) => {
   if (!p.startsWith(__dirname)) { res.writeHead(403); return res.end(); }
   fs.readFile(p, (err, buf) => {
     if (err) { res.writeHead(404); return res.end('not found'); }
-    res.writeHead(200, { 'Content-Type': types[path.extname(p)] || 'application/octet-stream' });
+    res.writeHead(200, { 'Content-Type': types[path.extname(p)] || 'application/octet-stream', 'Cache-Control': 'no-store' });
     res.end(buf);
   });
 }).listen(port, () => console.log(`http://localhost:${port}`));

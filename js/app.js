@@ -2,15 +2,16 @@
   const $ = s => document.querySelector(s);
   const pick = a => a[Math.floor(Math.random() * a.length)];
 
-  const PRAISE = ['יופי! 👏', 'אלוף! 🏆', 'וואו! 🤩', 'בול! 🎯', 'כל הכבוד! 🌟', 'מושלם! ✨', 'איזה מוח! 🧠',
-    'טיל! 🚀', 'גאון! 🤓', 'נכון מאוד! ✅', 'אש! 🔥', 'מדהים! 🦄', 'יש! 💪', 'סחתיין! 😎'];
-  const OOPS = ['אופס! 🙈', 'כמעט! 🤏', 'הממ... לא בדיוק 🤔', 'הספרה הזאת התחפשה 🥸', 'אוי, החלקתי על בננה 🍌', 'נסה שוב, אתה יכול! 💪'];
-  const WIN = ['פתרת! 🥳', 'אלוף העולם! 🌍', 'מלך הנקודה! 👑', 'איזה תותח! 💥', 'סיימת בענק! 🐘'];
+  const PRAISE = ['יופי! 👏', 'אלופה! 🏆', 'וואו! 🤩', 'בול! 🎯', 'כל הכבוד! 🌟', 'מושלם! ✨', 'איזה מוח! 🧠',
+    'טיל! 🚀', 'גאונה! 🤓', 'כל הכבוד תהילה! 🌟', 'תהילה, את תותחית! 💥', 'נכון מאוד! ✅', 'אש! 🔥', 'מדהים! 🦄', 'יש! 💪', 'סחתיין! 😎'];
+  const OOPS = ['אופס! 🙈', 'כמעט! 🤏', 'הממ... לא בדיוק 🤔', 'הספרה הזאת התחפשה 🥸', 'אוי, החלקתי על בננה 🍌', 'נסי שוב, את יכולה! 💪'];
+  const WIN = ['פתרת! 🥳', 'אלופת העולם! 🌍', 'מלכת הנקודה! 👑', 'איזו תותחית! 💥', 'תהילה, את גאונה! 🤓', 'סיימת בענק! 🐘'];
 
   const all = [];
   PAGES.forEach(page => page.questions.forEach(q => all.push({ page, q })));
 
-  let currentIdx = -1, game = null, streak = 0;
+  const KID = 'תהילה';
+  let currentIdx = -1, custom = null, game = null, streak = 0;
 
   // ---------- sound ----------
   const Sound = {
@@ -45,10 +46,22 @@
     let html = `
       <div class="menu-head">
         <div class="logo">🦊</div>
-        <h1>מסע הנקודה העשרונית</h1>
+        <h1>היי ${KID}! 👋<small>מסע הנקודה העשרונית</small></h1>
         <div class="stars-total">⭐ ${Store.totalStars()}</div>
       </div>
-      <button class="big-btn" id="continueBtn">${left ? '▶ יאללה, לשאלה הבאה!' : '🏆 פתרת הכל! אלוף!'}</button>`;
+      <button class="big-btn" id="continueBtn">${left ? '▶ יאללה, לשאלה הבאה!' : '🏆 פתרת הכל! אלופה!'}</button>
+      <div class="page custom">
+        <h2>✏️ תרגיל מהחוברת</h2>
+        <div class="custom-row">
+          <div class="custom-nums" dir="ltr">
+            <input id="cA" inputmode="decimal" autocomplete="off" placeholder="4.3">
+            <span>×</span>
+            <input id="cB" inputmode="decimal" autocomplete="off" placeholder="2.5">
+          </div>
+          <button id="cGo" class="go-btn">פתרי! 🚀</button>
+        </div>
+        <div id="cErr" class="err"></div>
+      </div>`;
     PAGES.forEach(page => {
       const done = page.questions.filter(q => Store.isDone(q.id)).length;
       html += `<div class="page"><h2>${page.title}</h2>
@@ -70,6 +83,8 @@
     m.querySelectorAll('.card').forEach(c => {
       c.onclick = () => startQuestion(all.findIndex(x => x.q.id === c.dataset.id));
     });
+    $('#cGo').onclick = startCustom;
+    ['#cA', '#cB'].forEach(id => $(id).addEventListener('keydown', e => { if (e.key === 'Enter') startCustom(); }));
     $('#resetBtn').onclick = () => {
       if (confirm('למחוק את כל ההתקדמות והכוכבים?')) { Store.reset(); showMenu(); }
     };
@@ -83,16 +98,37 @@
     return -1;
   }
 
+  // Typed-in question (not in the workbook photo). Not tracked.
+  function normalize(s) {
+    s = s.trim().replace(',', '.');
+    if (!/^\d*\.?\d*$/.test(s) || !/\d/.test(s)) return null;
+    if (s.startsWith('.')) s = '0' + s;
+    if (s.endsWith('.')) s = s.slice(0, -1);
+    return s.replace(/^0+(?=\d)/, '');
+  }
+  function startCustom() {
+    const a = normalize($('#cA').value), b = normalize($('#cB').value);
+    const err = t => { $('#cErr').textContent = t; };
+    if (!a || !b) return err('צריך לכתוב מספר בכל ריבוע 🙂');
+    if (+a === 0 || +b === 0) return err('כפל ב-0 זה תמיד 0 😉 בחרי מספר אחר');
+    if (a.replace('.', '').length > 7 || b.replace('.', '').length > 5) return err('המספר ארוך מדי 😅');
+    play({ type: 'mul', questions: [] }, { id: 'custom', label: 'משלי', a, b }, true);
+  }
+
   // ---------- play ----------
   function startQuestion(i) {
     currentIdx = i;
-    const { page, q } = all[i];
+    play(all[i].page, all[i].q, false);
+  }
+
+  function play(page, q, isCustom) {
+    custom = isCustom ? q : null;
     $('#menu').classList.add('hidden');
     $('#doneOverlay').classList.add('hidden');
     $('#play').classList.remove('hidden');
     const pos = page.questions.indexOf(q) + 1;
-    $('#qLabel').textContent = `שאלה ${q.label}`;
-    $('#qProgress').textContent = `${pos} מתוך ${page.questions.length}`;
+    $('#qLabel').textContent = isCustom ? 'תרגיל משלי ✏️' : `שאלה ${q.label}`;
+    $('#qProgress').textContent = isCustom ? '' : `${pos} מתוך ${page.questions.length}`;
     streak = 0; renderStreak();
     const engines = { mul: window.MulGame };
     game = engines[page.type](q, $('#boardWrap'), ui);
@@ -122,7 +158,7 @@
       Sound.good(streak);
       renderStreak(true);
       let text = pick(PRAISE);
-      if (streak > 0 && streak % 5 === 0) text = `${streak} ברצף! 🔥🔥 אתה בוער!`;
+      if (streak > 0 && streak % 5 === 0) text = `${streak} ברצף! 🔥🔥 את בוערת, תהילה!`;
       say(text + (intro ? '<br>' + intro : ''), 'good');
     },
     wrong(hint) {
@@ -142,9 +178,9 @@
       setTimeout(() => f.remove(), 900);
     },
     complete({ answer, trimmed, mistakes }) {
-      const { q } = all[currentIdx];
+      const q = custom || all[currentIdx].q;
       const stars = mistakes === 0 ? 3 : mistakes <= 2 ? 2 : 1;
-      Store.markDone(q.id, stars, mistakes);
+      if (!custom) Store.markDone(q.id, stars, mistakes);
       Sound.win();
       confetti();
       say('🎉🎉🎉', 'good');
@@ -154,13 +190,14 @@
         $('#doneNote').textContent = trimmed ? 'את האפסים בסוף אחרי הנקודה אפשר למחוק 😉' : '';
         $('#doneStars').innerHTML = [1, 2, 3].map(n => `<span class="${n <= stars ? '' : 'dim'}">⭐</span>`).join('');
         const more = nextUndone(currentIdx) >= 0;
-        $('#nextBtn').textContent = more ? 'לשאלה הבאה ◀' : '🏆 סיימת הכל!';
+        $('#nextBtn').textContent = custom ? '✏️ עוד תרגיל משלי' : more ? 'לשאלה הבאה ◀' : '🏆 סיימת הכל!';
         $('#doneOverlay').classList.remove('hidden');
       }, 1100);
     }
   };
 
   function goNext() {
+    if (custom) { showMenu(); $('#cA').focus(); return; }
     const i = nextUndone(currentIdx);
     if (i >= 0) startQuestion(i); else showMenu();
   }

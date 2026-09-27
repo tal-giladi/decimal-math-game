@@ -181,3 +181,21 @@ button { font-family: inherit; cursor: pointer; }
   .icon-btn { width: 44px; height: 44px; font-size: 22px; }
   .numpad button { height: 54px; font-size: 26px; }
 }
+
+/* ---------- personal + custom question ---------- */
+.menu-head h1 small { display: block; font-size: 18px; color: #7a7d99; font-weight: normal; margin-top: 2px; }
+.custom { border: 3px dashed var(--pink); }
+.custom-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; }
+.custom-nums { display: flex; align-items: center; gap: 8px; font-size: 30px; }
+.custom-nums input {
+  width: 130px; font-size: 28px; font-family: inherit; text-align: center; padding: 8px;
+  border: 3px solid #ffd27a; border-radius: 14px; background: #fffdf3; color: var(--ink);
+}
+.custom-nums input:focus { outline: none; border-color: var(--pink); }
+.go-btn {
+  border: 0; border-radius: 14px; background: var(--pink); color: #fff; font-size: 24px;
+  padding: 12px 22px; box-shadow: 0 5px 0 #c2185b;
+}
+.go-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #c2185b; }
+.err { color: var(--red); text-align: center; min-height: 24px; margin-top: 8px; font-size: 18px; }
+@media (max-width: 520px) { .custom-nums input { width: 100px; font-size: 24px; } }
